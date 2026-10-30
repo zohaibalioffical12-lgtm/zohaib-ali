@@ -1,0 +1,397 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["ceo", "principal", "teacher", "student", "parent", "accountant", "admissions_officer", "librarian"] },
+        "photoUrl": { "type": "string", "maxLength": 1024 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Trusted admin role lookup document for CEO / Super Administrator",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "maxLength": 64 },
+        "assignedAt": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student academic and demographic information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "admissionNo": { "type": "string", "maxLength": 64 },
+        "fullName": { "type": "string", "maxLength": 128 },
+        "gender": { "type": "string", "enum": ["male", "female"] },
+        "dateOfBirth": { "type": "string", "maxLength": 32 },
+        "admissionDate": { "type": "string", "maxLength": 32 },
+        "academicYear": { "type": "string", "maxLength": 32 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "className": { "type": "string", "maxLength": 64 },
+        "sectionId": { "type": "string", "maxLength": 64 },
+        "sectionName": { "type": "string", "maxLength": 64 },
+        "genderSection": { "type": "string", "enum": ["boys", "girls"] },
+        "guardianName": { "type": "string", "maxLength": 128 },
+        "guardianPhone": { "type": "string", "maxLength": 32 },
+        "guardianEmail": { "type": "string", "maxLength": 256 },
+        "address": { "type": "string", "maxLength": 256 },
+        "status": { "type": "string", "enum": ["active", "transferred", "graduated", "withdrawn"] },
+        "photoUrl": { "type": "string", "maxLength": 1024 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "admissionNo", "fullName", "gender", "classId", "className", "sectionId", "genderSection", "status"]
+    },
+    "SchoolClass": {
+      "title": "SchoolClass",
+      "description": "School class from Playgroup through Class 12",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 64 },
+        "numericGrade": { "type": "number" },
+        "wing": { "type": "string", "enum": ["combined", "boys", "girls"] },
+        "capacity": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "numericGrade", "active"]
+    },
+    "Section": {
+      "title": "Section",
+      "description": "Boys or Girls section for a specific class",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "className": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 32 },
+        "genderSection": { "type": "string", "enum": ["boys", "girls"] },
+        "roomNumber": { "type": "string", "maxLength": 32 },
+        "classTeacherId": { "type": "string", "maxLength": 128 },
+        "classTeacherName": { "type": "string", "maxLength": 128 },
+        "studentCount": { "type": "number" },
+        "capacity": { "type": "number" }
+      },
+      "required": ["id", "classId", "className", "name", "genderSection"]
+    },
+    "Teacher": {
+      "title": "Teacher",
+      "description": "Faculty profile and assignments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "gender": { "type": "string", "enum": ["male", "female"] },
+        "designation": { "type": "string", "maxLength": 64 },
+        "qualification": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["active", "on_leave", "resigned"] }
+      },
+      "required": ["id", "fullName", "email", "gender", "designation", "status"]
+    },
+    "AttendanceSession": {
+      "title": "AttendanceSession",
+      "description": "Class and section daily attendance register header",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 32 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "className": { "type": "string", "maxLength": 64 },
+        "sectionId": { "type": "string", "maxLength": 64 },
+        "sectionName": { "type": "string", "maxLength": 64 },
+        "genderSection": { "type": "string", "enum": ["boys", "girls"] },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "teacherName": { "type": "string", "maxLength": 128 },
+        "totalStudents": { "type": "number" },
+        "presentCount": { "type": "number" },
+        "absentCount": { "type": "number" },
+        "lateCount": { "type": "number" },
+        "leaveCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["submitted", "approved"] }
+      },
+      "required": ["id", "date", "classId", "sectionId", "genderSection", "teacherId", "status"]
+    },
+    "AttendanceRecord": {
+      "title": "AttendanceRecord",
+      "description": "Individual student attendance status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "sessionId": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 32 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "admissionNo": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "sectionId": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["present", "absent", "late", "leave"] },
+        "remarks": { "type": "string", "maxLength": 256 }
+      },
+      "required": ["id", "sessionId", "date", "studentId", "classId", "sectionId", "status"]
+    },
+    "Examination": {
+      "title": "Examination",
+      "description": "Examination term and schedule",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 128 },
+        "term": { "type": "string", "maxLength": 64 },
+        "academicYear": { "type": "string", "maxLength": 32 },
+        "startDate": { "type": "string", "maxLength": 32 },
+        "endDate": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "enum": ["scheduled", "ongoing", "grading", "published"] }
+      },
+      "required": ["id", "title", "term", "academicYear", "status"]
+    },
+    "ExamMark": {
+      "title": "ExamMark",
+      "description": "Marks awarded to student for specific examination subject",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "examId": { "type": "string", "maxLength": 64 },
+        "examTitle": { "type": "string", "maxLength": 128 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "admissionNo": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "sectionId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "subjectName": { "type": "string", "maxLength": 128 },
+        "marksObtained": { "type": "number" },
+        "maxMarks": { "type": "number" },
+        "passingMarks": { "type": "number" },
+        "grade": { "type": "string", "maxLength": 8 }
+      },
+      "required": ["id", "examId", "studentId", "classId", "subjectId", "marksObtained", "maxMarks"]
+    },
+    "FeeStructure": {
+      "title": "FeeStructure",
+      "description": "Fee schedule per class",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 128 },
+        "academicYear": { "type": "string", "maxLength": 32 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "tuitionFee": { "type": "number" },
+        "admissionFee": { "type": "number" },
+        "examFee": { "type": "number" },
+        "computerLabFee": { "type": "number" },
+        "totalAmount": { "type": "number" }
+      },
+      "required": ["id", "title", "classId", "tuitionFee", "totalAmount"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Monthly or term fee invoice for a student",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "invoiceNo": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "admissionNo": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "sectionId": { "type": "string", "maxLength": 64 },
+        "month": { "type": "string", "maxLength": 32 },
+        "year": { "type": "string", "maxLength": 16 },
+        "tuitionFee": { "type": "number" },
+        "otherFee": { "type": "number" },
+        "discount": { "type": "number" },
+        "netAmount": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "balance": { "type": "number" },
+        "status": { "type": "string", "enum": ["paid", "partial", "unpaid"] },
+        "dueDate": { "type": "string", "maxLength": 32 }
+      },
+      "required": ["id", "invoiceNo", "studentId", "netAmount", "paidAmount", "balance", "status"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Fee payment receipt record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "invoiceId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["Cash", "Bank Transfer", "Cheque", "Online"] },
+        "receiptNo": { "type": "string", "maxLength": 64 },
+        "date": { "type": "string", "maxLength": 32 },
+        "recordedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "invoiceId", "studentId", "amount", "paymentMethod", "receiptNo", "date"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "Institutional bulletin and notifications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 200 },
+        "content": { "type": "string", "maxLength": 2000 },
+        "targetAudience": { "type": "string", "enum": ["all", "teachers", "students", "parents"] },
+        "category": { "type": "string", "enum": ["academic", "exam", "fee", "event", "holiday"] },
+        "priority": { "type": "string", "enum": ["normal", "urgent"] },
+        "date": { "type": "string", "maxLength": 32 },
+        "authorName": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "title", "content", "targetAudience", "category", "priority", "date"]
+    },
+    "Admission": {
+      "title": "Admission",
+      "description": "Online admission applications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "applicantName": { "type": "string", "maxLength": 128 },
+        "gender": { "type": "string", "enum": ["male", "female"] },
+        "appliedClass": { "type": "string", "maxLength": 64 },
+        "parentName": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 256 },
+        "previousSchool": { "type": "string", "maxLength": 128 },
+        "submissionDate": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "enum": ["pending", "interview_scheduled", "approved", "rejected"] }
+      },
+      "required": ["id", "applicantName", "gender", "appliedClass", "parentName", "phone", "status"]
+    },
+    "Timetable": {
+      "title": "Timetable",
+      "description": "Class schedule per day of the week",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "className": { "type": "string", "maxLength": 64 },
+        "sectionId": { "type": "string", "maxLength": 64 },
+        "sectionName": { "type": "string", "maxLength": 64 },
+        "dayOfWeek": { "type": "string", "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] }
+      },
+      "required": ["id", "classId", "sectionId", "dayOfWeek"]
+    },
+    "SchoolSettings": {
+      "title": "SchoolSettings",
+      "description": "Institutional branding and contact details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "institutionName": { "type": "string", "maxLength": 128 },
+        "ownerName": { "type": "string", "maxLength": 128 },
+        "ownerEmail": { "type": "string", "maxLength": 256 },
+        "officialEmail": { "type": "string", "maxLength": 256 },
+        "contactNumber": { "type": "string", "maxLength": 64 },
+        "address": { "type": "string", "maxLength": 256 },
+        "academicYear": { "type": "string", "maxLength": 32 }
+      },
+      "required": ["id", "institutionName", "ownerName", "officialEmail", "contactNumber", "address"]
+    },
+    "WebsiteContent": {
+      "title": "WebsiteContent",
+      "description": "CMS content for public pages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "heroHeadline": { "type": "string", "maxLength": 256 },
+        "heroSubtitle": { "type": "string", "maxLength": 512 },
+        "aboutUsText": { "type": "string", "maxLength": 2048 },
+        "principalMessage": { "type": "string", "maxLength": 2048 },
+        "principalName": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "heroHeadline", "heroSubtitle", "aboutUsText"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User profiles and role information"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "Admin" },
+      "description": "Super admin and CEO security lookup collection"
+    },
+    "/students/{studentId}": {
+      "schema": { "$ref": "Student" },
+      "description": "Student master records and demographic information"
+    },
+    "/classes/{classId}": {
+      "schema": { "$ref": "SchoolClass" },
+      "description": "School academic grades (Playgroup to Class 12)"
+    },
+    "/sections/{sectionId}": {
+      "schema": { "$ref": "Section" },
+      "description": "Boys and Girls section rosters"
+    },
+    "/teachers/{teacherId}": {
+      "schema": { "$ref": "Teacher" },
+      "description": "Faculty staff profiles and subject assignments"
+    },
+    "/attendanceSessions/{sessionId}": {
+      "schema": { "$ref": "AttendanceSession" },
+      "description": "Daily section attendance sessions"
+    },
+    "/attendanceRecords/{recordId}": {
+      "schema": { "$ref": "AttendanceRecord" },
+      "description": "Individual student attendance status logs"
+    },
+    "/examinations/{examId}": {
+      "schema": { "$ref": "Examination" },
+      "description": "School exam schedules and publication status"
+    },
+    "/examinationMarks/{markId}": {
+      "schema": { "$ref": "ExamMark" },
+      "description": "Subject marks and evaluations"
+    },
+    "/feeStructures/{structureId}": {
+      "schema": { "$ref": "FeeStructure" },
+      "description": "Tuition and administrative fee definitions"
+    },
+    "/invoices/{invoiceId}": {
+      "schema": { "$ref": "Invoice" },
+      "description": "Student tuition invoices and payment statuses"
+    },
+    "/payments/{paymentId}": {
+      "schema": { "$ref": "Payment" },
+      "description": "Fee receipt transaction logs"
+    },
+    "/announcements/{announcementId}": {
+      "schema": { "$ref": "Announcement" },
+      "description": "School board notices and urgent alerts"
+    },
+    "/admissions/{admissionId}": {
+      "schema": { "$ref": "Admission" },
+      "description": "Public admission applications and admissions pipeline"
+    },
+    "/timetables/{timetableId}": {
+      "schema": { "$ref": "Timetable" },
+      "description": "Class and section weekly timetables"
+    },
+    "/schoolSettings/{settingId}": {
+      "schema": { "$ref": "SchoolSettings" },
+      "description": "Configurable school settings and branding"
+    },
+    "/websiteContent/{contentId}": {
+      "schema": { "$ref": "WebsiteContent" },
+      "description": "Website CMS pages and announcements"
+    }
+  }
+}

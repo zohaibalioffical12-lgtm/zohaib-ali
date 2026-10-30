@@ -1,0 +1,6 @@
+{
+  "name": "Muslim School & College Management System",
+  "description": "Comprehensive school and college management system with Playgroup to Class 12, separate boys and girls sections, role-based dashboards, and complete academic, fee, and attendance administration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

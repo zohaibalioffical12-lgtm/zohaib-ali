@@ -1,0 +1,207 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Security Primitives & Helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'zohaibalioffical12@gmail.com' ||
+        (request.auth.token.keys().hasAny(['email']) && request.auth.token.email.matches('.*@.*\\.edu(\\..*)?'))
+      );
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isStaff() {
+      return isAdmin() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in [
+          'ceo', 'principal', 'teacher', 'accountant', 'admissions_officer', 'librarian'
+        ]
+      );
+    }
+
+    // Admins Collection (Zohaib Ali & appointed administrators)
+    match /admins/{adminId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isValidId(adminId) && (isAdmin() || (isBootstrappedAdmin() && adminId == request.auth.uid));
+      allow delete: if isAdmin() && adminId != request.auth.uid;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(userId);
+      allow delete: if isAdmin();
+    }
+
+    // Assignments & Homework
+    match /assignments/{assignmentId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(assignmentId);
+      allow delete: if isAdmin();
+    }
+
+    // Assignment Submissions
+    match /assignmentSubmissions/{submissionId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(submissionId);
+      allow delete: if isAdmin();
+    }
+
+    // Students Master Collection (SIS)
+    match /students/{studentId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(studentId);
+      allow delete: if isAdmin();
+    }
+
+    // Academic Classes (Playgroup through Class 12)
+    match /classes/{classId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(classId);
+      allow delete: if isAdmin();
+    }
+
+    // Sections (Boys & Girls Wings)
+    match /sections/{sectionId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(sectionId);
+      allow delete: if isAdmin();
+    }
+
+    // Teachers & Faculty
+    match /teachers/{teacherId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(teacherId);
+      allow delete: if isAdmin();
+    }
+
+    // Attendance Sessions & Daily Registers
+    match /attendanceSessions/{sessionId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(sessionId);
+      allow delete: if isAdmin();
+    }
+
+    // Attendance Records
+    match /attendanceRecords/{recordId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(recordId);
+      allow delete: if isAdmin();
+    }
+
+    // Examinations
+    match /examinations/{examId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(examId);
+      allow delete: if isAdmin();
+    }
+
+    // Examination Marks
+    match /examinationMarks/{markId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(markId);
+      allow delete: if isAdmin();
+    }
+
+    // Fee Structures
+    match /feeStructures/{structureId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(structureId);
+      allow delete: if isAdmin();
+    }
+
+    // Invoices & Billing
+    match /invoices/{invoiceId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(invoiceId);
+      allow delete: if isAdmin();
+    }
+
+    // Payments & Fee Receipts
+    match /payments/{paymentId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(paymentId);
+      allow delete: if isAdmin();
+    }
+
+    // Announcements & Circulars
+    match /announcements/{announcementId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(announcementId);
+      allow delete: if isAdmin();
+    }
+
+    // Admissions (Public application submissions + Staff review)
+    match /admissions/{admissionId} {
+      allow create: if isValidId(admissionId) &&
+        incoming().applicantName is string && incoming().applicantName.size() <= 128;
+      allow get, list: if true;
+      allow update: if isValidId(admissionId);
+      allow delete: if isAdmin();
+    }
+
+    // Timetables
+    match /timetables/{timetableId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(timetableId);
+      allow delete: if isAdmin();
+    }
+
+    // School Settings (Editable by Owner / Super Admin Zohaib Ali)
+    match /schoolSettings/{settingId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(settingId);
+      allow delete: if isAdmin();
+    }
+
+    // Website Content (CMS)
+    match /websiteContent/{contentId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(contentId);
+      allow delete: if isAdmin();
+    }
+
+    // Library Books
+    match /libraryBooks/{bookId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(bookId);
+      allow delete: if isAdmin();
+    }
+
+    // Audit Logs
+    match /auditLogs/{logId} {
+      allow get, list: if true;
+      allow create: if isValidId(logId);
+      allow update, delete: if false; // Audit logs are immutable
+    }
+  }
+}
